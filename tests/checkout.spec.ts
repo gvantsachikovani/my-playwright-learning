@@ -37,6 +37,10 @@ test.describe('Checkout flow', () => {
       await checkoutPage.fillInfo('John', 'Smith', '12345');
     });
 
+    await test.step('Verify overview shows the product', async () => {
+      await expect(cartPage.getItemName('Sauce Labs Backpack')).toBeVisible();
+    });
+
     await test.step('Complete the order', async () => {
       await checkoutPage.finish();
       await expect(checkoutPage.successMessage).toBeVisible();
