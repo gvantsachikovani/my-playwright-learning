@@ -1,44 +1,35 @@
-// Login tests for saucedemo.com
 import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/LoginPage';
+import { users } from '../test-data/users';
 
 test.describe('Login page', () => {
+  let loginPage: LoginPage;
+
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    loginPage = new LoginPage(page);
+    await loginPage.open();
   });
 
   test('Valid credentials redirect to inventory page', async ({ page }) => {
-    await page.locator('#user-name').fill('standard_user');
-    await page.locator('#password').fill('secret_sauce');
-    await page.locator('#login-button').click();
-
+    await loginPage.login(users.standard.username, users.standard.password);
     await expect(page).toHaveURL(/inventory/);
   });
 
-  test('Locked out user sees error message', async ({ page }) => {
-    await page.locator('#user-name').fill('locked_out_user');
-    await page.locator('#password').fill('secret_sauce');
-    await page.locator('#login-button').click();
-
-    await expect(page.locator('[data-test="error"]')).toBeVisible();
-    await expect(page.locator('[data-test="error"]')).toContainText(
+  test('Locked out user sees correct error message', async () => {
+    await loginPage.login(users.locked.username, users.locked.password);
+    await expect(loginPage.errorMessage).toBeVisible();
+    await expect(loginPage.errorMessage).toContainText(
       'Epic sadface: Sorry, this user has been locked out.'
     );
   });
 
-  test('Wrong password shows error message', async ({ page }) => {
-    await page.locator('#user-name').fill('standard_user');
-    await page.locator('#password').fill('wrong_password');
-    await page.locator('#login-button').click();
-
-    await expect(page.locator('[data-test="error"]')).toBeVisible();
+  test('Wrong password shows error message', async () => {
+    await loginPage.login(users.invalid.username, users.invalid.password);
+    await expect(loginPage.errorMessage).toBeVisible();
   });
 
-  test('Empty form shows username required error', async ({ page }) => {
-    await page.locator('#login-button').click();
-
-    await expect(page.locator('[data-test="error"]')).toContainText(
-      'Username is required'
-    );
+  test('Empty form shows username required error', async () => {
+    await loginPage.loginButton.click();
+    await expect(loginPage.errorMessage).toContainText('Username is required');
   });
 });
-
