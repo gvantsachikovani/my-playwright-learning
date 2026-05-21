@@ -30,4 +30,9 @@ export class InventoryPage {
   async sortBy(option: string) {
     await this.sortDropdown.selectOption(option);
   }
+
+  async getAllPrices(): Promise<number[]> {
+    const priceTexts = await this.productPrices.allTextContents();
+    return priceTexts.map(text => parseFloat(text.replace('$', '')));
+  }
 }
