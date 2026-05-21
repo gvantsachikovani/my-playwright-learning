@@ -1,3 +1,4 @@
+// Login tests for saucedemo.com
 import { test, expect } from '@playwright/test';
 
 test.describe('Login page', () => {
