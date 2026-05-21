@@ -20,7 +20,7 @@ test.describe('Login page', () => {
 
     await expect(page.locator('[data-test="error"]')).toBeVisible();
     await expect(page.locator('[data-test="error"]')).toContainText(
-      'Sorry, this user has been locked out'
+      'Epic sadface: Sorry, this user has been locked out.'
     );
   });
 
